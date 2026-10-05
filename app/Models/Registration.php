@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RequestStatus;
 use App\Enums\Tipe;
+use App\Support\Mask;
 use App\Support\Phone;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -31,4 +32,34 @@ class Registration extends Model
     }
 
     public function scopePending(Builder $q): Builder { return $q->where('status', RequestStatus::Pending); }
+
+    protected function email(): Attribute
+{
+    return Attribute::set(fn (?string $v) => $v ? mb_strtolower(trim($v)) : null);
+}
+
+protected function namaTersamar(): Attribute
+{
+    return Attribute::get(fn () => Mask::name($this->nama));
+}
+
+protected function waTersamar(): Attribute
+{
+    return Attribute::get(fn () => Phone::mask($this->no_wa));
+}
+
+/** Pengajuan terbaru yang cocok dengan input pengguna (NIM/NIDN, email, atau HP). */
+public static function latestFor(string $identifier): ?self
+{
+    $identifier = trim($identifier);
+
+    return static::query()
+        ->where(function ($q) use ($identifier) {
+            $q->where('nim_nidn', $identifier)
+              ->orWhere('email', mb_strtolower($identifier))
+              ->orWhere('no_wa', Phone::normalize($identifier));
+        })
+        ->latest('id')
+        ->first();
+}
 }

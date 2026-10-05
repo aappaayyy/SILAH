@@ -11,3 +11,4 @@ Schedule::command('hotspot:import --link')
     ->hourly()
     ->withoutOverlapping()
     ->runInBackground();
+Schedule::command('registration:purge-docs')->dailyAt('02:00');

@@ -9,7 +9,8 @@
         "php": "^8.3",
         "evilfreelancer/routeros-api-php": "^1.7",
         "laravel/framework": "^13.17",
-        "laravel/tinker": "^3.0"
+        "laravel/tinker": "^3.0",
+        "spatie/laravel-honeypot": "^4.7"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -43,7 +44,7 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "@php artisan dev"
+            "npx concurrently -k \"php artisan queue:listen --queue=default,wa --tries=3\" \"php artisan schedule:work\" -n queue,schedule"
         ],
         "test": [
             "@php artisan config:clear --ansi @no_additional_args",
