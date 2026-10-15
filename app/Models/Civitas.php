@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Tipe;
+use App\Support\Mask;
 use App\Support\Phone;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -47,5 +48,15 @@ class Civitas extends Model
 
         return static::aktif()->where('nim_nidn', $input)->first()
             ?? static::aktif()->where('no_wa', Phone::normalize($input))->first();
+    }
+
+    protected function namaTersamar(): Attribute
+    {
+        return Attribute::get(fn () => Mask::name($this->nama));
+    }
+
+    protected function waTersamar(): Attribute
+    {
+        return Attribute::get(fn () => $this->no_wa ? Phone::mask($this->no_wa) : null);
     }
 }

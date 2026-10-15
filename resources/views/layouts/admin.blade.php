@@ -51,6 +51,12 @@
                             </a>
                         </li>
 
+                        <li class="sidebar-item {{ request()->routeIs('admin.whatsapp.*') ? 'active' : '' }}">
+                            <a href="{{ route('admin.whatsapp.index') }}" class="sidebar-link">
+                                <i class="bi bi-whatsapp"></i><span>WhatsApp</span>
+                            </a>
+                        </li>
+
                         <li class="sidebar-title">Akun</li>
                         <li class="sidebar-item">
                             <form method="POST" action="{{ route('admin.logout') }}">

@@ -29,14 +29,25 @@ class WhatsappClient
         return $this->http('')->get('/health')->throw()->json();
     }
 
-    private function http(string $body): PendingRequest
+    /** @return array{state:string,pending:int,qr:?string,connectedAt:?string} */
+    public function status(): array
+    {
+        return $this->http('', 4)->get('/status')->throw()->json();
+    }
+
+    public function resetSession(): void
+    {
+        $this->http('{}', 5)->send('POST', '/session/reset')->throw();
+    }
+
+    private function http(string $body, ?int $timeout = null): PendingRequest
     {
         $ts  = (string) time();
         $sig = hash_hmac('sha256', $ts . '.' . $body, config('wa.secret'));
 
         $req = Http::baseUrl(config('wa.url'))
             ->connectTimeout(3)
-            ->timeout(config('wa.timeout'))
+            ->timeout($timeout ?? config('wa.timeout'))
             ->acceptJson()
             ->withHeaders(['X-Timestamp' => $ts, 'X-Signature' => $sig]);
 

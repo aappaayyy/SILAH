@@ -10,6 +10,7 @@ use App\Services\Mikrotik\MikrotikClient;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -39,8 +40,13 @@ class SyncMikrotikUser implements ShouldQueue, ShouldBeEncrypted
     {
         $account = HotspotAccount::findOrFail($this->accountId);
 
-        // Idempotent: aman diulang saat retry
         $mt->upsertHotspotUser($account->username, $this->password, $account->profile);
+
+        // Hash disimpan SETELAH router berhasil, jadi selalu cocok dengan password yang berlaku
+        $account->forceFill([
+            'password_hash'       => Hash::make($this->password),
+            'password_changed_at' => now(),
+        ])->save();
     }
 
     public function failed(Throwable $e): void

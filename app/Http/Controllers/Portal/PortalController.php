@@ -6,7 +6,6 @@ use App\Enums\RequestStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Registration;
 use App\Support\PortalFlow;
-use Illuminate\Http\Request;
 
 class PortalController extends Controller
 {
@@ -16,7 +15,9 @@ class PortalController extends Controller
             return view('portal.index', [
                 'step' => 'reset',
                 'nama' => $civitas->nama_tersamar,
+                'tipe' => $civitas->tipe->value,
                 'wa'   => $civitas->wa_tersamar,
+                'bisaGanti' => (bool) $civitas->hotspotAccount?->password_hash,
             ]);
         }
 
@@ -49,7 +50,7 @@ class PortalController extends Controller
         }
 
         if (session()->has('wa')) {
-            return view('portal.index', ['step' => 'selesai', 'wa' => session('wa')]);
+            return view('portal.index', ['step' => 'selesai', 'wa' => session('wa'),'mode' => session('mode', 'kirim')]);
         }
 
         return view('portal.index', ['step' => 'cek']);

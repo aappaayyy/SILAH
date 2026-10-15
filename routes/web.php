@@ -3,7 +3,9 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\RegistrationAdminController;
+use App\Http\Controllers\Admin\WhatsappController;
 use App\Http\Controllers\Portal\AccountCheckController;
+use App\Http\Controllers\Portal\PasswordController;
 use App\Http\Controllers\Portal\PortalController;
 use App\Http\Controllers\Portal\RegistrationController;
 use App\Http\Controllers\Portal\ResetController;
@@ -23,6 +25,7 @@ Route::middleware('throttle:portal')->group(function () {
         ->middleware(ProtectAgainstSpam::class)
         ->name('register.store');   // dibuat di langkah pendaftaran
     Route::post('/ajukan-ulang', [PortalController::class, 'reapply'])->name('portal.reapply');
+    Route::post('/ganti-password', [PasswordController::class, 'store'])->name('password.change');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -42,5 +45,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::get('pendaftaran/{registration}/dokumen', [RegistrationAdminController::class, 'document'])->name('registrations.document');
         Route::post('pendaftaran/{registration}/setujui', [RegistrationAdminController::class, 'approve'])->name('registrations.approve');
         Route::post('pendaftaran/{registration}/tolak', [RegistrationAdminController::class, 'reject'])->name('registrations.reject');
+
+        Route::get('whatsapp', [WhatsappController::class, 'index'])->name('whatsapp.index');
+        Route::get('whatsapp/status', [WhatsappController::class, 'status'])
+            ->middleware('throttle:60,1')->name('whatsapp.status');
+        Route::post('whatsapp/reset', [WhatsappController::class, 'reset'])->name('whatsapp.reset');
     });
 });

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->string('to', 20)->index();
-            $table->enum('type', ['akun_reset', 'akun_baru', 'pendaftaran_ditolak'])->index();
+            $table->enum('type', ['akun_reset', 'akun_baru', 'pendaftaran_ditolak', 'password_diubah'])->index();
             $table->enum('status', ['queued', 'sent', 'failed'])->default('queued')->default('queued')->index();
             $table->unsignedTinyInteger('attempts')->default(0);
             $table->text('error')->nullable();

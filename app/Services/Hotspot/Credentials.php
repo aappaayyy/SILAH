@@ -25,4 +25,10 @@ class Credentials
         return "{$head}\nUsername: {$username}\nPassword: {$password}\n\n"
             . 'Jangan bagikan kepada siapa pun. Jika Anda tidak merasa mendaftar, segera hubungi helpdesk.';
     }
+
+    public static function changed(string $username): string
+    {
+        return "Password hotspot Anda sudah diperbarui dan aktif.\nUsername: {$username}\n\n"
+            . 'Jika bukan Anda yang mengubahnya, segera hubungi helpdesk.';
+    }
 }

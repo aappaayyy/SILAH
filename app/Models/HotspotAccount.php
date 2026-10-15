@@ -13,7 +13,7 @@ class HotspotAccount extends Model
 {
     protected $fillable = [
         'civitas_id','username','mikrotik_id','profile','is_disabled',
-        'last_seen_at','last_reset_at','reset_count','expired_at',
+        'last_seen_at','last_reset_at','reset_count','expired_at', 'password_hash','password_changed_at',
     ];
 
     protected function casts(): array
@@ -23,8 +23,11 @@ class HotspotAccount extends Model
             'last_seen_at'  => 'datetime',
             'last_reset_at' => 'datetime',
             'expired_at'    => 'datetime',
+            'password_changed_at' => 'datetime',
         ];
     }
+
+    protected $hidden = ['password_hash'];
 
     public function civitas(): BelongsTo { return $this->belongsTo(Civitas::class); }
     public function whatsappMessages(): MorphMany { return $this->morphMany(WhatsappMessage::class, 'related'); }
